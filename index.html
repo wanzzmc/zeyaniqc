@@ -1,149 +1,212 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IQC By Zeyann</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zeyan iPhone Quoted Generator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body {
-      background: #000;
-      color: #eee;
-      font-family: "Poppins", Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #eee; min-height: 100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      padding:20px; position:relative; overflow-x:hidden;
     }
+    .stars { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-1; }
+    .star { position:absolute; background-color:#fff; border-radius:50%; animation:twinkle 5s infinite; opacity:0; }
+    @keyframes twinkle { 0%,100%{opacity:0} 50%{opacity:1} }
     h1 {
-      font-size: 2.3rem;
-      margin-bottom: 20px;
-      background: linear-gradient(90deg, #1e90ff, #00aaff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 15px #0077ff;
+      font-size:2.8rem; margin-bottom:20px; text-align:center;
+      background:linear-gradient(90deg,#1e90ff,#00aaff,#1e90ff);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      text-shadow:0 0 15px rgba(30,144,255,0.5); position:relative; padding-bottom:10px;
+    }
+    h1::after {
+      content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:100px; height:4px;
+      background:linear-gradient(90deg,#1e90ff,#00aaff); border-radius:2px;
     }
     .container {
-      background: rgba(25, 25, 25, 0.95);
-      padding: 25px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,119,255,0.3);
-      width: 100%;
-      max-width: 480px;
-      text-align: center;
-      backdrop-filter: blur(10px);
+      background:rgba(20,30,48,0.85); padding:30px; border-radius:20px; box-shadow:0 10px 30px rgba(0,119,255,0.25);
+      width:100%; max-width:500px; text-align:center; backdrop-filter: blur(10px); border:1px solid rgba(255,255,255,0.1);
+      position:relative; overflow:hidden; z-index:1;
     }
+    .container::before {
+      content:''; position:absolute; top:-10px; left:-10px; right:-10px; bottom:-10px;
+      background:linear-gradient(45deg,#1e90ff,#00aaff,#1e90ff); z-index:-1; border-radius:25px; animation:borderGlow 3s infinite; opacity:0.5;
+    }
+    @keyframes borderGlow { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+    .input-container { position:relative; margin-bottom:20px; }
     input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      border: 2px solid #1e90ff;
-      outline: none;
-      font-size: 1rem;
-      background: #111;
-      color: #eee;
-      transition: 0.3s;
-      box-sizing: border-box;
+      width:100%; padding:15px 20px; margin-bottom:20px; border-radius:12px; border:2px solid rgba(30,144,255,0.5);
+      outline:none; font-size:1rem; background:rgba(15,23,42,0.7); color:#eee; transition:all 0.3s ease;
     }
-    input:focus {
-      border-color: #00aaff;
-      box-shadow: 0 0 12px #00aaff88;
-    }
+    input:focus { border-color:#00aaff; box-shadow:0 0 15px rgba(0,170,255,0.5); background:rgba(15,23,42,0.9); }
+    input::placeholder { color:rgba(238,238,238,0.6); }
     button {
-      background: linear-gradient(90deg, #1e90ff, #00aaff);
-      border: none;
-      padding: 12px 25px;
-      border-radius: 50px;
-      cursor: pointer;
-      font-size: 1rem;
-      color: #111;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      margin: 0 auto;
-      transition: transform 0.2s, box-shadow 0.3s;
+      background:linear-gradient(90deg,#1e90ff,#00aaff); border:none; padding:14px 30px; border-radius:50px; cursor:pointer;
+      font-size:1.1rem; color:#fff; font-weight:600; display:flex; gap:8px; margin:0 auto; transition:all 0.3s ease; box-shadow:0 5px 15px rgba(30,144,255,0.4);
+      position:relative; overflow:hidden;
     }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 18px #1e90ff66;
+    button::before {
+      content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+      background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transition:0.5s;
     }
-    .result {
-      margin-top: 20px;
-      min-height: 120px;
-    }
-    .result img {
+    button:hover::before { left:100%; }
+    button:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(30,144,255,0.6); }
+    button:active { transform:translateY(0); }
+    .result { margin-top:25px; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .result img { max-width:100%; border-radius:15px; border:2px solid rgba(30,144,255,0.3); margin-top:15px; box-shadow:0 5px 20px rgba(30,144,255,0.3); transition:all 0.3s ease; }
+    .result img:hover { transform:scale(1.02); box-shadow:0 8px 25px rgba(30,144,255,0.4); }
+    .loader { border:4px solid rgba(51,51,51,0.3); border-top:4px solid #1e90ff; border-radius:50%; width:40px; height:40px; animation:spin 1s linear infinite; margin:20px auto; box-shadow:0 0 10px rgba(30,144,255,0.5); }
+    @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+    .download-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(30, 144, 255, 0.1);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      text-align: center;
       max-width: 100%;
-      border-radius: 15px;
-      border: 2px solid #1e90ff;
-      margin-top: 15px;
-      box-shadow: 0 0 20px rgba(30,144,255,0.3);
+      border: 1px dashed rgba(30, 144, 255, 0.3);
     }
-    .loader {
-      border: 4px solid #333;
-      border-top: 4px solid #1e90ff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
+    .download-info i {
+      color: #1e90ff;
+      margin-right: 8px;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .download-btn {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      border-radius: 30px;
-      background: linear-gradient(90deg, #00aaff, #1e90ff);
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .download-btn:hover {
-      box-shadow: 0 0 15px #00aaffaa;
-      transform: scale(1.05);
-    }
+    .notification { position:fixed; top:20px; right:20px; padding:15px 25px; border-radius:10px; background:rgba(30,144,255,0.9); color:white; box-shadow:0 5px 15px rgba(0,0,0,0.2); transform:translateX(150%); transition:transform 0.3s ease; z-index:1000; display:flex; align-items:center; gap:10px; }
+    .notification.show { transform:translateX(0); }
+    .notification.error { background:rgba(255,50,50,0.9); }
+    footer { margin-top:30px; text-align:center; color:rgba(255,255,255,0.7); font-size:0.9rem; }
+    @media (max-width:600px) { h1 { font-size:2.2rem; } .container { padding:20px; } button { padding:12px 25px; font-size:1rem; } }
   </style>
 </head>
 <body>
-  <h1>iPhone Quoted Zeyan</h1>
-  <div class="container">
-    <input type="text" id="message" placeholder="Tulis kata-kata kamu... ✨">
-    <button onclick="generateImage()">🚀 Kirim</button>
+  <div class="stars" id="stars"></div>
 
-    <div class="result" id="result"></div>
+  <h1>iPhone Quoted Generator</h1>
+  <div class="container">
+    <div class="input-container">
+      <input type="text" id="message" placeholder="Tulis kata-kata kamu... ✨" />
+    </div>
+    <button id="generateBtn">
+      <i class="fas fa-rocket"></i> Generate Image
+    </button>
+
+    <div class="result" id="result">
+      <p>Hasil akan muncul di sini</p>
+    </div>
   </div>
 
+  <div class="notification" id="notification" aria-live="polite" role="status">
+    <i class="fas fa-check-circle" id="notification-icon"></i>
+    <span id="notification-text"></span>
+  </div>
+
+  <footer>
+    <p>© 2025 iPhone Quoted Generator | Dibuat oleh Dzahwan </p>
+  </footer>
+
   <script>
+    // ---------- Stars ----------
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starsCount = 80;
+      for (let i = 0; i < starsCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        const size = Math.random() * 2.5 + 0.5;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 5}s`;
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // ---------- Notification ----------
+    function showNotification(message, isError = false) {
+      const notification = document.getElementById('notification');
+      const icon = document.getElementById('notification-icon');
+      const text = document.getElementById('notification-text');
+
+      text.textContent = message;
+      if (isError) {
+        notification.classList.add('error');
+        icon.className = 'fas fa-exclamation-circle';
+      } else {
+        notification.classList.remove('error');
+        icon.className = 'fas fa-check-circle';
+      }
+
+      notification.classList.add('show');
+
+      clearTimeout(window._notifTimeout);
+      window._notifTimeout = setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+    }
+
+    // ---------- Generate image dengan metode alternatif ----------
     function generateImage() {
       const message = document.getElementById("message").value.trim();
       const resultDiv = document.getElementById("result");
 
       if (!message) {
-        alert("Harap masukkan teks terlebih dahulu!");
+        showNotification("Harap masukkan teks terlebih dahulu!", true);
         return;
       }
 
+      // Show loader
       resultDiv.innerHTML = '<div class="loader"></div><p>Sedang memproses...</p>';
 
-      const apiUrl = `https://brat.siputzx.my.id/iphone-quoted?time=11%3A26&messageText=${encodeURIComponent(message)}&carrierName=INDOSAT%20OOREDOO&batteryPercentage=88&signalStrength=4&emojiStyle=apple`;
+      // Build API URL dengan parameter dinamis
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const timeParam = `${hours}%3A${minutes}`;
+      
+      const apiUrl = `https://brat.siputzx.my.id/iphone-quoted?time=${timeParam}&messageText=${encodeURIComponent(message)}&carrierName=INDOSAT%20OOREDOO&batteryPercentage=88&signalStrength=4&emojiStyle=apple`;
 
-      setTimeout(() => {
+      // Gunakan pendekatan alternatif dengan menampilkan gambar langsung
+      const img = new Image();
+      
+      img.onload = function() {
         resultDiv.innerHTML = `
           <p>Hasil:</p>
-          <img src="${apiUrl}" alt="Generated Image">
-          <br>
-          <a class="download-btn" href="/api/download?url=${encodeURIComponent(apiUrl)}">⬇️ Download</a>
+          <img src="${apiUrl}" alt="Generated Image" class="generated-image">
+          <div class="download-info">
+            <i class="fas fa-info-circle"></i>
+            <p>Untuk menyimpan gambar, tekan lama pada gambar (di perangkat mobile) atau klik kanan (di desktop) lalu pilih "Download Image" atau "Simpan Gambar"</p>
+          </div>
         `;
-      }, 800);
+        showNotification('Gambar berhasil dibuat! Gunakan menu download manual pada gambar.');
+      };
+      
+      img.onerror = function() {
+        resultDiv.innerHTML = `
+          <p>Terjadi kesalahan saat memuat gambar. Silakan coba lagi.</p>
+          <div class="download-info">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>Pastikan koneksi internet Anda stabil dan coba lagi dalam beberapa saat.</p>
+          </div>
+        `;
+        showNotification('Gagal memuat gambar. Periksa koneksi internet Anda.', true);
+      };
+      
+      // Mulai memuat gambar
+      img.src = apiUrl;
     }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      createStars();
+      document.getElementById('generateBtn').addEventListener('click', generateImage);
+      document.getElementById('message').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') generateImage();
+      });
+    });
   </script>
 </body>
 </html>
