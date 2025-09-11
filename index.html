@@ -37,12 +37,40 @@
     }
     @keyframes borderGlow { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
     .input-container { position:relative; margin-bottom:20px; }
-    input {
-      width:100%; padding:15px 20px; margin-bottom:20px; border-radius:12px; border:2px solid rgba(30,144,255,0.5);
+    input, select {
+      width:100%; padding:15px 20px; margin-bottom:15px; border-radius:12px; border:2px solid rgba(30,144,255,0.5);
       outline:none; font-size:1rem; background:rgba(15,23,42,0.7); color:#eee; transition:all 0.3s ease;
     }
-    input:focus { border-color:#00aaff; box-shadow:0 0 15px rgba(0,170,255,0.5); background:rgba(15,23,42,0.9); }
-    input::placeholder { color:rgba(238,238,238,0.6); }
+    input:focus, select:focus { border-color:#00aaff; box-shadow:0 0 15px rgba(0,170,255,0.5); background:rgba(15,23,42,0.9); }
+    input::placeholder, select::placeholder { color:rgba(238,238,238,0.6); }
+    .settings-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .settings-row > div {
+      flex: 1;
+    }
+    .settings-row label {
+      display: block;
+      text-align: left;
+      margin-bottom: 5px;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+    .battery-container {
+      position: relative;
+    }
+    .battery-value {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(30, 144, 255, 0.3);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
     button {
       background:linear-gradient(90deg,#1e90ff,#00aaff); border:none; padding:14px 30px; border-radius:50px; cursor:pointer;
       font-size:1.1rem; color:#fff; font-weight:600; display:flex; gap:8px; margin:0 auto; transition:all 0.3s ease; box-shadow:0 5px 15px rgba(30,144,255,0.4);
@@ -78,7 +106,12 @@
     .notification.show { transform:translateX(0); }
     .notification.error { background:rgba(255,50,50,0.9); }
     footer { margin-top:30px; text-align:center; color:rgba(255,255,255,0.7); font-size:0.9rem; }
-    @media (max-width:600px) { h1 { font-size:2.2rem; } .container { padding:20px; } button { padding:12px 25px; font-size:1rem; } }
+    @media (max-width:600px) { 
+      h1 { font-size:2.2rem; } 
+      .container { padding:20px; } 
+      button { padding:12px 25px; font-size:1rem; } 
+      .settings-row { flex-direction: column; gap: 0; }
+    }
   </style>
 </head>
 <body>
@@ -89,6 +122,43 @@
     <div class="input-container">
       <input type="text" id="message" placeholder="Tulis kata-kata kamu... ✨" />
     </div>
+    
+    <div class="settings-row">
+      <div>
+        <label for="carrier">Operator</label>
+        <select id="carrier">
+          <option value="TELKOMSEL">Telkomsel</option>
+          <option value="INDOSAT OOREDOO">Indosat</option>
+          <option value="XL AXIATA">XL Axiata</option>
+          <option value="SMARTFREN">Smartfren</option>
+          <option value="TRI">3 (Tri)</option>
+          <option value="AXIS">Axis</option>
+        </select>
+      </div>
+      <div>
+        <label for="time">Waktu</label>
+        <input type="time" id="time" value="11:26">
+      </div>
+    </div>
+    
+    <div class="settings-row">
+      <div class="battery-container">
+        <label for="battery">Baterai</label>
+        <input type="range" id="battery" min="0" max="100" value="88">
+        <span class="battery-value" id="batteryValue">88%</span>
+      </div>
+      <div>
+        <label for="signal">Sinyal</label>
+        <select id="signal">
+          <option value="0">Tidak ada sinyal</option>
+          <option value="1">Sinyal lemah</option>
+          <option value="2">Sinyal sedang</option>
+          <option value="3">Sinyal baik</option>
+          <option value="4" selected>Sinyal penuh</option>
+        </select>
+      </div>
+    </div>
+
     <button id="generateBtn">
       <i class="fas fa-rocket"></i> Generate Image
     </button>
@@ -104,7 +174,7 @@
   </div>
 
   <footer>
-    <p>© 2025 iPhone Quoted Generator | Dibuat oleh Dzahwan </p>
+    <p>© 2023 iPhone Quoted Generator | Dibuat oleh Dzahwan ⚡</p>
   </footer>
 
   <script>
@@ -124,6 +194,11 @@
         starsContainer.appendChild(star);
       }
     }
+
+    // ---------- Battery Slider Update ----------
+    document.getElementById('battery').addEventListener('input', function() {
+      document.getElementById('batteryValue').textContent = this.value + '%';
+    });
 
     // ---------- Notification ----------
     function showNotification(message, isError = false) {
@@ -158,16 +233,21 @@
         return;
       }
 
+      // Ambil nilai dari input baru
+      const carrier = document.getElementById("carrier").value;
+      const timeInput = document.getElementById("time").value;
+      const battery = document.getElementById("battery").value;
+      const signal = document.getElementById("signal").value;
+      
+      // Format waktu
+      const timeParts = timeInput.split(':');
+      const timeFormatted = `${timeParts[0]}%3A${timeParts[1]}`;
+
       // Show loader
       resultDiv.innerHTML = '<div class="loader"></div><p>Sedang memproses...</p>';
 
-      // Build API URL dengan parameter dinamis
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const timeParam = `${hours}%3A${minutes}`;
-      
-      const apiUrl = `https://brat.siputzx.my.id/iphone-quoted?time=${timeParam}&messageText=${encodeURIComponent(message)}&carrierName=INDOSAT%20OOREDOO&batteryPercentage=88&signalStrength=4&emojiStyle=apple`;
+      // Build API URL dengan parameter yang dapat disesuaikan
+      const apiUrl = `https://brat.siputzx.my.id/iphone-quoted?time=${timeFormatted}&messageText=${encodeURIComponent(message)}&carrierName=${encodeURIComponent(carrier)}&batteryPercentage=${battery}&signalStrength=${signal}&emojiStyle=apple`;
 
       // Gunakan pendekatan alternatif dengan menampilkan gambar langsung
       const img = new Image();
@@ -178,7 +258,7 @@
           <img src="${apiUrl}" alt="Generated Image" class="generated-image">
           <div class="download-info">
             <i class="fas fa-info-circle"></i>
-            <p>Untuk menyimpan gambar, tekan lama pada gambar (di perangkat mobile) atau klik kanan (di desktop) lalu pilih "Download Image" atau "Simpan Gambar"</p>
+            <p>Untuk menyimpan gambar, tekan lama pada gambar (di perangkat mobile) atau klik kanan (di desktop) lalu pilih "Download Image" atau "Download Gambar"</p>
           </div>
         `;
         showNotification('Gambar berhasil dibuat! Gunakan menu download manual pada gambar.');
